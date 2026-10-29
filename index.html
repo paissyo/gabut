@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Catatan Lucu Buat Safaa</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&family=Baloo+2:wght@600;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --w: min(340px, 44vw);          /* lebar 1 halaman */
+    --h: calc(var(--w) * 1.36);     /* tinggi halaman */
+    --fs: calc(var(--w) / 21);      /* ukuran font dasar, ikut skala */
+    --pink1:#f08aa6; --pink2:#d9457f;
+    --paper:#e9f4ef;
+    --ink:#7a1f35;
+    --stripe:#d0506a;
+    --flip: 0.9s;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{
+    display:grid;place-items:center;
+    background-color:#f4eeee;
+    background-image:radial-gradient(#e7c6cc 1.4px, transparent 1.6px);
+    background-size:26px 26px;
+    font-family:'Patrick Hand','Comic Sans MS',cursive;
+    overflow:hidden;
+    -webkit-tap-highlight-color:transparent;
+  }
+
+  /* ---------- BUKU ---------- */
+  .scene{perspective:2200px; width:calc(var(--w)*2); height:var(--h);}
+  .book{
+    position:relative; width:100%; height:100%;
+    transform-style:preserve-3d;
+    transition:transform 1s cubic-bezier(.6,.05,.25,1);
+    transform:translateX(calc(var(--w) / -2)) rotateX(6deg) rotateZ(-1.5deg);
+    filter:drop-shadow(0 18px 22px rgba(217,69,127,.28));
+  }
+  .book.open{ transform:translateX(0) rotateX(6deg) rotateZ(-1.5deg); }
+
+  .leaf{
+    position:absolute; left:50%; top:0;
+    width:var(--w); height:100%;
+    transform-origin:left center;
+    transform-style:preserve-3d;
+    transition:transform var(--flip) cubic-bezier(.5,.05,.2,1);
+  }
+  .leaf.flipped{ transform:rotateY(-180deg); }
+
+  .face{
+    position:absolute; inset:0;
+    backface-visibility:hidden; -webkit-backface-visibility:hidden;
+    border-radius:4px 14px 14px 4px;
+    overflow:hidden; cursor:pointer;
+  }
+  .face.back{ transform:rotateY(180deg); border-radius:14px 4px 4px 14px; }
+
+  /* kertas */
+  .page{
+    background:var(--paper);
+    background-image:
+      linear-gradient(90deg, rgba(0,0,0,.10), transparent 12%),
+      repeating-linear-gradient(0deg, rgba(255,255,255,.35) 0 1px, transparent 1px 3px);
+    color:var(--ink);
+    display:flex; flex-direction:column;
+    padding:calc(var(--fs)*1.6) calc(var(--fs)*1.5) calc(var(--fs)*1.1);
+    font-size:var(--fs);
+  }
+  .face.back.page{
+    background-image:
+      linear-gradient(270deg, rgba(0,0,0,.10), transparent 12%),
+      repeating-linear-gradient(0deg, rgba(255,255,255,.35) 0 1px, transparent 1px 3px);
+  }
+  .page h2{
+    font-family:'Baloo 2',cursive; font-weight:800;
+    font-size:calc(var(--fs)*1.45); text-align:center;
+    padding-bottom:calc(var(--fs)*.55);
+    border-bottom:2px dashed rgba(122,31,53,.28);
+  }
+  .page .body{
+    flex:1; display:flex; flex-direction:column; justify-content:center; gap:1.1em;
+    line-height:1.75; font-size:calc(var(--fs)*1.02);
+  }
+  .page .body p b{color:#c2255c}
+  .deco{ position:absolute; top:calc(var(--fs)*.7); font-size:calc(var(--fs)*1.3); }
+  .face.page:not(.back) .deco{ right:calc(var(--fs)*.9); }
+  .face.page.back .deco{ left:calc(var(--fs)*.9); }
+  .emojis{
+    display:flex; justify-content:space-around; align-items:center;
+    font-size:calc(var(--fs)*1.9); padding-top:.4em;
+  }
+  .emojis span{ display:inline-block; animation:bob 2.6s ease-in-out infinite; }
+  .emojis span:nth-child(2){animation-delay:.4s}
+  .emojis span:nth-child(3){animation-delay:.8s}
+  @keyframes bob{50%{transform:translateY(-.25em) rotate(-6deg)}}
+  .hint{
+    position:absolute; bottom:calc(var(--fs)*.55);
+    font-size:calc(var(--fs)*.62); font-weight:bold; opacity:.75; letter-spacing:.2px;
+  }
+  .face.page:not(.back) .hint{ right:calc(var(--fs)*1); }
+  .face.page.back .hint{ left:calc(var(--fs)*1); }
+
+  /* sampul */
+  .cover{
+    background:linear-gradient(155deg,var(--pink1),var(--pink2));
+    color:#fff; text-align:center;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    gap:calc(var(--fs)*.7);
+    box-shadow:inset 0 0 0 3px rgba(255,255,255,.65);
+    border:0;
+  }
+  .cover svg{ width:42%; height:auto; filter:drop-shadow(0 4px 6px rgba(0,0,0,.15)); }
+  .cover h1{
+    font-family:'Baloo 2',cursive; font-weight:800;
+    font-size:calc(var(--fs)*1.65); line-height:1.15; padding:0 1em;
+    text-shadow:0 2px 0 rgba(122,31,53,.35);
+    margin-top:calc(var(--fs)*1.2);
+  }
+  .cover .sub{ font-size:calc(var(--fs)*.85); opacity:.95 }
+  .cover .spark{ font-size:calc(var(--fs)*1.2) }
+  .pill{
+    position:absolute; right:calc(var(--fs)*.9); bottom:calc(var(--fs)*.9);
+    background:#fff; color:var(--ink); border-radius:999px;
+    padding:.3em .8em; font-size:calc(var(--fs)*.7); font-weight:bold;
+    box-shadow:0 2px 6px rgba(0,0,0,.18);
+    animation:nudge 1.6s ease-in-out infinite;
+  }
+  @keyframes nudge{50%{transform:translateX(.35em)}}
+
+  /* sampul belakang */
+  .backcover{
+    background:var(--paper);
+    padding:calc(var(--fs)*.9);
+    cursor:default;
+  }
+  .backcover .inner{
+    height:100%; border-radius:14px; color:#fff; text-align:center;
+    background:linear-gradient(180deg,var(--pink1),var(--pink2));
+    display:flex; flex-direction:column; align-items:center;
+    padding:calc(var(--fs)*1.2) calc(var(--fs)*.8) calc(var(--fs)*1);
+    box-shadow:inset 0 0 0 2px rgba(255,255,255,.5);
+  }
+  .backcover h2{
+    font-family:'Baloo 2',cursive; font-size:calc(var(--fs)*1.45);
+    text-shadow:0 2px 0 rgba(122,31,53,.3);
+  }
+  .backcover p{ font-size:calc(var(--fs)*.78); opacity:.95 }
+  .backcover .row{ display:flex; justify-content:space-around; width:100%; font-size:calc(var(--fs)*1.6); margin-top:calc(var(--fs)*.8) }
+  .backcover .grow{flex:1}
+  .btn{
+    font-family:inherit; font-size:calc(var(--fs)*.9); font-weight:bold;
+    border:0; border-radius:999px; padding:.5em 1.3em; cursor:pointer;
+    background:#fff; color:var(--ink); box-shadow:0 3px 0 rgba(122,31,53,.35);
+    transition:transform .15s;
+  }
+  .btn:hover{transform:translateY(-2px) scale(1.04)}
+  .btn:active{transform:translateY(1px)}
+
+  /* jilid spiral di tengah */
+  .spine{
+    position:absolute; left:50%; top:-2px; bottom:-2px; width:calc(var(--fs)*1.25);
+    transform:translateX(-50%) translateZ(2px);
+    background:repeating-linear-gradient(180deg,var(--stripe) 0 calc(var(--fs)*.9), #fff 0 calc(var(--fs)*1.25));
+    border-radius:3px; z-index:500; pointer-events:none;
+    box-shadow:0 0 6px rgba(0,0,0,.25);
+  }
+
+  .credit{ position:fixed; bottom:10px; width:100%; text-align:center; font-size:12px; color:#b88; opacity:.8 }
+</style>
+</head>
+<body>
+
+<div class="scene">
+  <div class="book" id="book">
+
+    <!-- LEMBAR 0: sampul + Halaman Pembuka -->
+    <div class="leaf" data-i="0">
+      <div class="face cover front">
+        <span class="spark">✨</span>
+        <svg viewBox="0 0 120 110" aria-hidden="true">
+          <path d="M18 40 L26 4 L52 24 Z" fill="#f3d6d6" stroke="#cfa6a6" stroke-width="2" stroke-linejoin="round"/>
+          <path d="M102 40 L94 4 L68 24 Z" fill="#f3d6d6" stroke="#cfa6a6" stroke-width="2" stroke-linejoin="round"/>
+          <ellipse cx="60" cy="62" rx="50" ry="42" fill="#dff3ec"/>
+          <circle cx="40" cy="58" r="6" fill="#111"/><circle cx="80" cy="58" r="6" fill="#111"/>
+          <circle cx="42" cy="56" r="2" fill="#fff"/><circle cx="82" cy="56" r="2" fill="#fff"/>
+          <ellipse cx="26" cy="70" rx="7" ry="5" fill="#f6b6c6" opacity=".8"/>
+          <ellipse cx="94" cy="70" rx="7" ry="5" fill="#f6b6c6" opacity=".8"/>
+          <path d="M44 76 Q60 90 78 74" fill="none" stroke="#2f9e63" stroke-width="3.5" stroke-linecap="round"/>
+          <g transform="translate(82 74)">
+            <circle r="8" fill="#d9457f"/><circle r="3" fill="#f7a8c2"/>
+            <circle cx="-9" cy="0" r="4" fill="#e85c92"/><circle cx="9" cy="0" r="4" fill="#e85c92"/>
+            <circle cy="-9" r="4" fill="#e85c92"/><circle cy="9" r="4" fill="#e85c92"/>
+            <circle r="3.4" fill="#f9c7d8"/>
+          </g>
+        </svg>
+        <h1>Catatan Lucu Buat Safaa<br><span class="spark">✨</span></h1>
+        <div class="sub">(Jangan diskip ya wuahahaha)</div>
+        <div class="pill">Klik sampulnya →</div>
+      </div>
+      <div class="face back page">
+        <span class="deco">⭐</span>
+        <h2>Halaman Pembuka 🐾</h2>
+        <div class="body">
+          <p>"Hai pretty angel! Sengaja bikin buku catatan model begini biar gemesin abisnya gabutt tau. Isinya cuma mau bilang thanks for anything and everything.</p>
+          <p>Yuk lanjut buka halaman berikutnya! 👇"</p>
+        </div>
+        <div class="emojis"><span>🌸</span><span>😺</span><span>❤️</span></div>
+      </div>
+    </div>
+
+    <!-- LEMBAR 1: Hal-hal Kecil | Sumpah Ya -->
+    <div class="leaf" data-i="1">
+      <div class="face page front">
+        <span class="deco">🌷</span>
+        <h2>Hal-hal Kecil 🌷</h2>
+        <div class="body">
+          <p>"Tau ngga si?? Kadang hal paling sederhana kayak dapet chat dari lu atau ngobrol random di call bisa bikin mood gua langsung bagus seharian anjrittt, bahkan gua sampe terngiang-ngiang sama nada suara lu soalnya lucuu dan gua suka itu HAHAHAHA.</p>
+          <p>Kayak kucing di sampul depan, walau cuma bawa bunga kecil tapi udah bikin senyum sendiri hehehew, one day bunganya beneran deh."</p>
+        </div>
+        <div class="emojis"><span>✨</span><span>🧸</span><span>✨</span></div>
+        <div class="hint">Sentuh buat balik →</div>
+      </div>
+      <div class="face back page">
+        <h2>Sumpah Ya... 🤫</h2>
+        <div class="body">
+          <p>"Jujurly, makin hari rasanya makin sayang (HAHAHAA BERCANDAAA). Tapi yaa gatau kenapa tu gua kalo ngobrol sama lu kaya nyaman gitu anjir, lu orangnya menarik banget sumpaa.</p>
+          <p>Tetap jadi orang yang asik dan gemesin begini ya. Jangan ke mana-mana dongg, tunggu gua yaa hehehe"</p>
+        </div>
+        <div class="emojis"><span>💕</span><span>☕</span><span>🍩</span></div>
+      </div>
+    </div>
+
+    <!-- LEMBAR 2: Janji Asli | The End -->
+    <div class="leaf" data-i="2">
+      <div class="face page front">
+        <span class="deco">🍓</span>
+        <h2>Janji Asli! 🥺</h2>
+        <div class="body">
+          <p>"Walaupun kita emang belum perna ketemu face to face, gua PENGEN BANGET NEMENIN LU DIMANA PUN DAN KAPAN PUN ITUU</p>
+          <p>Intinya, gua bakal terus nemenin lu di saat senang maupun mager bareng.</p>
+          <p>Jangan bosen-bosen yaa buat cerita ke gua hahahha, pengen deh kayanya ketemuan sama lu.<br>Eitss, dikit lagi halaman terakhir!"</p>
+        </div>
+        <div class="emojis"><span>🎉</span><span>🎀</span><span>🎊</span></div>
+        <div class="hint">Halaman terakhir →</div>
+      </div>
+      <div class="face back page">
+        <span class="deco">✨</span>
+        <h2>The End 😆</h2>
+        <div class="body" style="text-align:center">
+          <p>"Udah habis catatannya! Makasih ya udah baca sampe akhir.</p>
+          <p><b>Semoga hari kamu semanis permen karet pink dan secerah senyum kucing gigit bunga! Love u! 🐾💕"</b></p>
+        </div>
+        <div class="emojis"><span>😺</span><span>💐</span><span>😻</span></div>
+      </div>
+    </div>
+
+    <!-- SAMPUL BELAKANG (statis) -->
+    <div class="leaf" data-i="3" data-static="1">
+      <div class="face backcover front">
+        <div class="inner">
+          <h2>Selesai Ya! 🎀</h2>
+          <p>Sampai jumpa di cerita berikutnya~</p>
+          <div class="row"><span>🐾</span><span>🌸</span><span>🐾</span></div>
+          <div class="grow"></div>
+          <button class="btn" id="closeBtn">Tutup Buku 📕</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="spine"></div>
+  </div>
+</div>
+
+<div class="credit">klik halaman untuk membalik · atau pakai tombol ← →</div>
+
+<script>
+(() => {
+  const book   = document.getElementById('book');
+  const leaves = [...document.querySelectorAll('.leaf')];
+  const N      = leaves.length;           // termasuk sampul belakang
+  const FLIPPABLE = N - 1;                // sampul belakang tidak dibalik
+  let flipped = 0;                        // jumlah lembar yang sudah dibalik
+  let busy = false;
+
+  // urutan tumpukan: yang belum dibalik makin kecil indeks = makin di atas
+  function settleZ(){
+    leaves.forEach((lf, i) => {
+      const isFlipped = lf.classList.contains('flipped');
+      lf.style.zIndex = isFlipped ? i : (N - i);
+    });
+  }
+  settleZ();
+
+  function setOpen(){ book.classList.toggle('open', flipped > 0); }
+
+  function flipForward(){
+    if (busy || flipped >= FLIPPABLE) return;
+    busy = true;
+    const lf = leaves[flipped];
+    lf.style.zIndex = 100;
+    lf.classList.add('flipped');
+    flipped++; setOpen();
+    setTimeout(() => { settleZ(); busy = false; }, 900);
+  }
+
+  function flipBack(){
+    if (busy || flipped <= 0) return;
+    busy = true;
+    const lf = leaves[flipped - 1];
+    lf.style.zIndex = 100;
+    lf.classList.remove('flipped');
+    flipped--; setOpen();
+    setTimeout(() => { settleZ(); busy = false; }, 900);
+  }
+
+  // klik: sisi depan → maju, sisi belakang → mundur
+  leaves.forEach(lf => {
+    if (lf.dataset.static) return;
+    lf.querySelector('.front').addEventListener('click', flipForward);
+    lf.querySelector('.back').addEventListener('click', flipBack);
+  });
+
+  // tutup buku: balik semua lembar satu per satu
+  document.getElementById('closeBtn').addEventListener('click', async () => {
+    while (flipped > 0) {
+      while (busy) await new Promise(r => setTimeout(r, 40));
+      flipBack();
+      await new Promise(r => setTimeout(r, 260));
+    }
+  });
+
+  // keyboard
+  addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight') flipForward();
+    if (e.key === 'ArrowLeft')  flipBack();
+  });
+
+  // swipe di layar sentuh
+  let sx = null;
+  addEventListener('touchstart', e => { sx = e.touches[0].clientX; }, {passive:true});
+  addEventListener('touchend', e => {
+    if (sx === null) return;
+    const dx = e.changedTouches[0].clientX - sx;
+    if (dx < -40) flipForward();
+    if (dx >  40) flipBack();
+    sx = null;
+  }, {passive:true});
+})();
+</script>
+</body>
+</html>
